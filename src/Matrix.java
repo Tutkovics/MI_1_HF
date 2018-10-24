@@ -20,6 +20,11 @@ public class Matrix {
         queue = new ArrayDeque<>();
         currentState = new int[]{0,0};
         previousState = new int[]{0,0};
+        for (int i = 0; i< n ; i++){
+            for(int j= 0; j< n; j++){
+                getFrom[i][j] = null;
+            }
+        }getFrom[0][0]=new int[]{-1,-1};
     }
 
     public void addNewRow(int[] row, int j){
@@ -84,23 +89,31 @@ public class Matrix {
         while(queue.size() != 0 && numberOfItems != foundItems){
             currentState = queue.poll();
             p("\nCurrentState: " + currentState[0] +", "+currentState[1]);
-            if(canGoRight(currentState) && !isVisited(new int[]{currentState[0], currentState[1]+1})){
-                queue.offer(new int[]{currentState[0], currentState[1]+1});
-                if(!isVisited(new int[]{currentState[0],currentState[1]+1})) getFrom[currentState[0]][currentState[1]+1]=currentState;
+            if(canGoRight(currentState) ){
+                if(!isVisited(new int[]{currentState[0],currentState[1]+1})){
+                    getFrom[currentState[0]][currentState[1]+1]=currentState;
+                    queue.offer(new int[]{currentState[0], currentState[1]+1});
+                }
 
             }
-            if(canGoDown(currentState) && !isVisited(new int[]{currentState[0]+1, currentState[1]})){
-                queue.offer(new int[]{currentState[0]+1, currentState[1]});
-                if(!isVisited(new int[]{currentState[0]+1,currentState[1]})) getFrom[currentState[0]+1][currentState[1]]=currentState;
+            if(canGoDown(currentState)){
+                if(!isVisited(new int[]{currentState[0]+1,currentState[1]})){
+                    getFrom[currentState[0]+1][currentState[1]]=currentState;
+                    queue.offer(new int[]{currentState[0]+1, currentState[1]});
+                }
                 p(currentState[0] +", "+currentState[1] +" can go down");
             }
-            if(canGoUp(currentState) && !isVisited(new int[]{currentState[0]-1, currentState[1]})){
-                queue.offer(new int[]{currentState[0]-1, currentState[1]});
-                if(!isVisited(new int[]{currentState[0]-1,currentState[1]})) getFrom[currentState[0]-1][currentState[1]]=currentState;
+            if(canGoUp(currentState)){
+                if(!isVisited(new int[]{currentState[0]-1,currentState[1]})){
+                    getFrom[currentState[0]-1][currentState[1]]=currentState;
+                    queue.offer(new int[]{currentState[0]-1, currentState[1]});
+                }
             }
-            if(canGoLeft(currentState) && !isVisited(new int[]{currentState[0], currentState[1]-1})){
-                queue.offer(new int[]{currentState[0], currentState[1]-1});
-                if(!isVisited(new int[]{currentState[0],currentState[1]-1})) getFrom[currentState[0]][currentState[1]-1]=currentState;
+            if(canGoLeft(currentState)){
+                if(!isVisited(new int[]{currentState[0],currentState[1]-1})){
+                    getFrom[currentState[0]][currentState[1]-1]=currentState;
+                    queue.offer(new int[]{currentState[0], currentState[1]-1});
+                }
             }
             if(hasItem(currentState)){
                 foundItems++;
@@ -116,12 +129,17 @@ public class Matrix {
         }
 
         p("Minden kincs megvan");
-
+        int[] b;
         for (int i = 0; i< n ; i++){
             for(int j= 0; j< n; j++){
-                System.out.print("["+getFrom[i][j][0]+","+getFrom[i][j][1]+"]\t");
+                b=getFrom[i][j];
+                if(b!=null)System.out.print("["+b[0]+","+b[1]+"]\t");
+                else System.out.print("[null]\t");
+
             }p("");
         }
+
+
 
     }
 
@@ -135,9 +153,8 @@ public class Matrix {
     }
 
     public boolean isVisited(int[] a){
-        if(a[0]==0 && a[1]==0 ) return true;
-        else if(getFrom[a[0]][a[1]][0] == 0 && getFrom[a[0]][a[1]][1] == 0) return false;
-        else return true;
+        if(getFrom[a[0]][a[1]]==null)return false;
+        return true;
     }
 
 
