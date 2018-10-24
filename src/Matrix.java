@@ -38,13 +38,17 @@ public class Matrix {
         }
     }
 
-    public void printMatrix() {
+    public String printMatrix() {
+        String res = "";
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
+                res.concat(matrix[i][j] + "\t");
                 System.out.print(matrix[i][j] + "\t");
             }
+            res.concat("\n");
             System.out.print("\n");
         }
+        return res;
     }
 
     public int getIndexOf(int i, int j) {
@@ -88,7 +92,7 @@ public class Matrix {
     public void solve() {
         queue.offer(new int[]{0, 0});
 
-        while (queue.size() != 0 && numberOfItems != foundItems && !isVisited(new int[]{n - 1, n - 1})) {
+        while (queue.size() != 0 || numberOfItems != foundItems || !isVisited(new int[]{n - 1, n - 1})) {
             currentState = queue.poll();
             //p("\nCurrentState: " + currentState[0] +", "+currentState[1]);
             if (canGoRight(currentState)) {
@@ -132,17 +136,19 @@ public class Matrix {
             //   System.out.print(" --> " + a[0] + ", " + a[1] + " ");
             //}
         }
-        int[] b;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                b = getFrom[i][j];
-                if (b != null) System.out.print("[" + b[0] + "," + b[1] + "]\t");
-                else System.out.print("[null]\t");
-
-            }
-            p("");
-        }
+//        p("Doen");
+//        int[] b;
+//        for (int i = 0; i < n; i++) {
+//            for (int j = 0; j < n; j++) {
+//                b = getFrom[i][j];
+//                if (b != null) System.out.print("[" + b[0] + "," + b[1] + "]\t");
+//                else System.out.print("[null]\t");
+//
+//            }
+//            p("");
+//        }
         getPath(waiting, new int[]{n - 1, n - 1});
+        System.out.print("\n");
 
         //p("Minden kincs megvan");
 
