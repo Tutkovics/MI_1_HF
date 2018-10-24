@@ -7,13 +7,13 @@ public class Logic {
     private Deque<int[]> queue = new ArrayDeque<>();
     private int[] currentState;
 
-    Logic(Matrix m){
+    Logic(Matrix m) {
         matrix = m;
         getFrom = new int[m.n][m.n][2];
-        currentState = new int[]{0,0};
+        currentState = new int[]{0, 0};
     }
 
-    public void solve(){
+    public void solve() {
 
     }
 
