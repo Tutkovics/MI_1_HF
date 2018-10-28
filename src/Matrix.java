@@ -1,9 +1,11 @@
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
+import java.util.Iterator;
 
 public class Matrix {
 
-    private int[][] matrix;
+    public int[][] matrix;
     public int n;
     private int numberOfItems;
     private int[][][] getFrom;
@@ -31,10 +33,9 @@ public class Matrix {
 
     public void addNewRow(int[] row, int j) {
         if (j < n) {
-            matrix[j] = row;
-            return;
+            matrix[j] = row.clone();
         } else if (j == n) {
-            numberOfItems = row[0];
+           numberOfItems = row[0];
         }
     }
 
@@ -43,10 +44,10 @@ public class Matrix {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 res.concat(matrix[i][j] + "\t");
-                System.out.print(matrix[i][j] + "\t");
+                //System.out.print(matrix[i][j] + "\t");
             }
             res.concat("\n");
-            System.out.print("\n");
+            //System.out.print("\n");
         }
         return res;
     }
@@ -65,15 +66,19 @@ public class Matrix {
     }
 
     public boolean canGoRight(int[] state) {
+       // System.out.println(printMatrix());
         char[] bin = Integer.toBinaryString(matrix[state[0]][state[1]]).toCharArray();
+
         if (bin.length < 2) return state[1] != n - 1;
         else return bin[bin.length - 2] != '1';
     }
 
     public boolean canGoDown(int[] state) {
+
         char[] bin = Integer.toBinaryString(matrix[state[0]][state[1]]).toCharArray();
+//        System.out.println("** " + printArray(state) + " "+ Arrays.toString(bin));
         if (bin.length < 3) return state[0] != n - 1;
-        else return bin[bin.length - 3] != '1';
+        else return bin[bin.length - 3] != '1' && state[0] != n - 1;
     }
 
     public boolean canGoLeft(int[] state) {
@@ -103,6 +108,7 @@ public class Matrix {
 
             }
             if (canGoDown(currentState)) {
+                //System.out.println(printArray(currentState));
                 if (!isVisited(new int[]{currentState[0] + 1, currentState[1]})) {
                     getFrom[currentState[0] + 1][currentState[1]] = currentState;
                     queue.offer(new int[]{currentState[0] + 1, currentState[1]});
@@ -122,11 +128,15 @@ public class Matrix {
                 }
             }
             if (hasItem(currentState)) {
-                getPath(waiting, currentState);
-                waiting = currentState;
-                System.out.println("felvesz");
+                getPath(waiting, currentState.clone(), false);
+                System.out.println("0 0");
+                //waiting = currentState;
+//                System.out.println("felvesz ("+foundItems+")");
+//                System.out.println("waiting: " + waiting[0] + " " + waiting[1]);
                 //p("Új kincs");
                 foundItems++;
+                //getPath(currentState, new int[]{0,0});
+
             }
 
             //p("\ngetFrom[i][j] = ["+previousState[0] + ", "+ previousState[1] + "]" );
@@ -136,7 +146,8 @@ public class Matrix {
             //   System.out.print(" --> " + a[0] + ", " + a[1] + " ");
             //}
         }
-//        p("Doen");
+//        System.out.println("Megvan minden keresett szar");
+//      p("Doen");
 //        int[] b;
 //        for (int i = 0; i < n; i++) {
 //            for (int j = 0; j < n; j++) {
@@ -147,7 +158,7 @@ public class Matrix {
 //            }
 //            p("");
 //        }
-        getPath(waiting, new int[]{n - 1, n - 1});
+        getPath(waiting, new int[]{n - 1, n - 1}, true);
         System.out.print("\n");
 
         //p("Minden kincs megvan");
@@ -155,16 +166,30 @@ public class Matrix {
 
     }
 
-    private void getPath(int[] start, int[] finish) {
+    private void getPath(int[] start, int[] finish, boolean exitMaze) {
+//        System.out.println("GetPath: " + start[0] + ", " + start[1] + " --> " + finish[0] + ", " + finish[1]);
         Deque<int[]> stack = new ArrayDeque<>();
         while (!sameState(start, finish)) {
             stack.push(finish);
+//            System.out.println("Stack.push("+finish[0] + ", " + finish[1] +")" );
             finish = getFrom[finish[0]][finish[1]];
         }
         int steps = stack.size();
-        for (int i = 0; i < steps; i++) {
-            start = stack.poll();
-            System.out.println(start[0] + " " + start[1]);
+//        for (int i = 0; i < steps; i++) {
+//            start = stack.peek();
+//            System.out.println(start[0] + " " + start[1]);
+//        }
+        for(Iterator itr = stack.iterator();((Iterator) itr).hasNext();){
+            start = (int[]) itr.next();
+            System.out.println( start[0] + " " + start[1]);
+        }
+        if(!exitMaze) {
+            System.out.println("felvesz");
+            stack.pollLast();
+            for (int i = 0; i < steps - 1; i++) {
+                start = stack.pollLast();
+                System.out.println(start[0] + " " + start[1]);
+            }
         }
     }
 
@@ -173,13 +198,20 @@ public class Matrix {
     }
 
     public boolean sameState(int[] a, int[] b) {
-        return (a[0] == b[0] && a[1] == b[1]) || (a[0] == -1 && a[1] == -1) || (b[0] == -1 && b[1] == -1);
+        boolean res = (a[0] == b[0] && a[1] == b[1]) || (a[0] == -1 && a[1] == -1) || (b[0] == -1 && b[1] == -1);
+//        System.out.println("sameState("+printArray(a)+" && " +printArray(b)+ ")");
+        return res;
     }
 
     public boolean isVisited(int[] a) {
         if (getFrom[a[0]][a[1]] == null) return false;
         return true;
     }
+
+    public String printArray(int[] a){
+        return "["+a[0]+ ", " + a[1] +"]";
+    }
+
 
 
 }
